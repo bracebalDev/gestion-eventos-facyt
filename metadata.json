@@ -1,0 +1,6 @@
+{
+  "name": "Gestor de Eventos FaCyT",
+  "description": "Sistema inteligente de planificación, gestión y optimización de eventos académicos e institucionales en FaCyT.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,574 @@
+{
+  "espacios": [
+    {
+      "id": "esp-auditorio-ninoska",
+      "name": "Auditorio Ninoska Maneiro",
+      "capacity": 100,
+      "location": "Edificio Principal FaCyT",
+      "type": "auditorio",
+      "resources": [
+        "Sistema de Sonido Profesional",
+        "Proyector HD",
+        "Aires Acondicionados (2)",
+        "Micrófonos Inalámbricos"
+      ],
+      "observations": "Espacio magno compartido por todos los departamentos de FaCyT.",
+      "department": "GENERAL"
+    },
+    {
+      "id": "esp-bio-1",
+      "name": "Laboratorio Biotecnología",
+      "capacity": 35,
+      "location": "Edificio de Biología, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "Microscopios de Alta Resolución",
+        "Incubadoras",
+        "Autoclave",
+        "Pizarra Acrílica"
+      ],
+      "observations": "Exclusivo para prácticas e investigación en Biotecnología.",
+      "department": "BIOLOGIA"
+    },
+    {
+      "id": "esp-bio-2",
+      "name": "Laboratorio Ciencias Naturales",
+      "capacity": 25,
+      "location": "Edificio de Biología, Piso 1",
+      "type": "laboratorio",
+      "resources": [
+        "Muestras Biológicas",
+        "Estereomicroscopios",
+        "Videobeam HDMI"
+      ],
+      "observations": "Para prácticas de botánica, zoología y ecología.",
+      "department": "BIOLOGIA"
+    },
+    {
+      "id": "esp-bio-3",
+      "name": "Salón de Seminario Biología",
+      "capacity": 50,
+      "location": "Edificio de Biología, Piso 2",
+      "type": "salon",
+      "resources": [
+        "Proyector 4K",
+        "Aire Acondicionado",
+        "Mesa Directiva"
+      ],
+      "observations": "Presentación de tesis y seminarios departamentales.",
+      "department": "BIOLOGIA"
+    },
+    {
+      "id": "esp-qui-1",
+      "name": "Laboratorio de Química Orgánica",
+      "capacity": 35,
+      "location": "Edificio de Química, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "Extractores de Gases",
+        "Campanas de Extracción",
+        "Mecheros de Bunsen",
+        "Reactivos"
+      ],
+      "observations": "Cumplir normas de bioseguridad obligatorias.",
+      "department": "QUIMICA"
+    },
+    {
+      "id": "esp-qui-2",
+      "name": "Laboratorio de Óptica",
+      "capacity": 35,
+      "location": "Edificio de Química, Piso 1",
+      "type": "laboratorio",
+      "resources": [
+        "Espectrofotómetros",
+        "Bancos Ópticos",
+        "Osciloscopios digital"
+      ],
+      "observations": "Uso reservado para prácticas especializadas de espectroscopía.",
+      "department": "QUIMICA"
+    },
+    {
+      "id": "esp-qui-3",
+      "name": "Sala de Seminario Química",
+      "capacity": 55,
+      "location": "Edificio de Química, Piso 2",
+      "type": "salon",
+      "resources": [
+        "Televisor Smart 75\"",
+        "Pizarra de Vidrio",
+        "Climatización Integral"
+      ],
+      "observations": "Seminarios y conferencias del departamento de Química.",
+      "department": "QUIMICA"
+    },
+    {
+      "id": "esp-qui-4",
+      "name": "Auditorio Marie Curie",
+      "capacity": 85,
+      "location": "Edificio de Química, Planta Alta",
+      "type": "auditorio",
+      "resources": [
+        "Audio Surround",
+        "Proyector Láser de Alta Definición",
+        "Aforo ampliado"
+      ],
+      "observations": "Auditorio departamental de Química.",
+      "department": "QUIMICA"
+    },
+    {
+      "id": "esp-comp-1",
+      "name": "Salón de Seminario Computación",
+      "capacity": 45,
+      "location": "Edificio de Computación, Piso 2",
+      "type": "salon",
+      "resources": [
+        "Pantalla Interactiva Touch",
+        "Videobeam HDMI",
+        "Climatización"
+      ],
+      "observations": "Defensas de trabajo especial de grado y reuniones docentes.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-2",
+      "name": "Laboratorio de Computación 1",
+      "capacity": 30,
+      "location": "Edificio de Computación, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "30 PCs Intel Core i7",
+        "Videobeam HDMI",
+        "Internet Fibra Óptica"
+      ],
+      "observations": "Talleres y laboratorios de programación estructurada y OO.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-3",
+      "name": "Laboratorio de Computación 2",
+      "capacity": 30,
+      "location": "Edificio de Computación, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "30 PCs Intel Core i7",
+        "Videobeam",
+        "Pizarra Acrílica"
+      ],
+      "observations": "Prácticas de bases de datos e ingeniería de software.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-4",
+      "name": "Laboratorio de Computación 3",
+      "capacity": 30,
+      "location": "Edificio de Computación, Piso 1",
+      "type": "laboratorio",
+      "resources": [
+        "30 PCs AMD Ryzen 7",
+        "Videobeam HDMI",
+        "Aire Acondicionado"
+      ],
+      "observations": "Laboratorio de sistemas operativos y arquitectura.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-5",
+      "name": "Laboratorio de Computación 4",
+      "capacity": 30,
+      "location": "Edificio de Computación, Piso 1",
+      "type": "laboratorio",
+      "resources": [
+        "30 PCs Intel Core i7",
+        "Videobeam",
+        "Switches de prueba"
+      ],
+      "observations": "Desarrollo web y proyectos avanzados.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-6",
+      "name": "Laboratorio de Redes de Computadores",
+      "capacity": 20,
+      "location": "Edificio de Computación, Piso 2",
+      "type": "laboratorio",
+      "resources": [
+        "Racks Cisco",
+        "Routers y Switches Industriales",
+        "Cableado Estructurado"
+      ],
+      "observations": "Prácticas avanzadas de redes y telecomunicaciones.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-7",
+      "name": "Auditorio Alan Turing",
+      "capacity": 60,
+      "location": "Edificio de Computación, Planta Alta",
+      "type": "auditorio",
+      "resources": [
+        "Sonido Integrado",
+        "Proyector HD",
+        "Butacas ergonómicas"
+      ],
+      "observations": "Conferencias y jornadas de la carrera de Computación.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-comp-8",
+      "name": "Sala de Postgrado Computación",
+      "capacity": 30,
+      "location": "Edificio de Postgrado, Piso 1",
+      "type": "salon",
+      "resources": [
+        "Mesa Directiva Modular",
+        "Smart TV 65\"",
+        "Sistema de Videoconferencia"
+      ],
+      "observations": "Postgrados y maestría en ciencias de la computación.",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "esp-fis-1",
+      "name": "Laboratorio Física General",
+      "capacity": 25,
+      "location": "Edificio de Física, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "Equipos de Mecánica y Electromagnetismo",
+        "Pizarra Acrílica"
+      ],
+      "observations": "Prácticas de laboratorio para física I, II y III.",
+      "department": "FISICA"
+    },
+    {
+      "id": "esp-fis-2",
+      "name": "Auditorio Albert Einstein",
+      "capacity": 40,
+      "location": "Edificio de Física, Planta Alta",
+      "type": "auditorio",
+      "resources": [
+        "Proyector 4K",
+        "Sistema de Audio",
+        "Pizarra"
+      ],
+      "observations": "Conferencias y coloquios de la Licenciatura en Física.",
+      "department": "FISICA"
+    },
+    {
+      "id": "esp-fis-3",
+      "name": "Sala de Postgrado Física",
+      "capacity": 20,
+      "location": "Edificio de Postgrado, Piso 2",
+      "type": "salon",
+      "resources": [
+        "Mesa de Conferencia",
+        "Videobeam",
+        "Aire Acondicionado"
+      ],
+      "observations": "Seminarios de investigación en física teórica y experimental.",
+      "department": "FISICA"
+    },
+    {
+      "id": "esp-mat-1",
+      "name": "Laboratorio Matemática Experimental",
+      "capacity": 30,
+      "location": "Edificio de Matemática, Planta Baja",
+      "type": "laboratorio",
+      "resources": [
+        "Software Matlab / SageMath",
+        "PCs de Alto Rendimiento",
+        "Proyector HD"
+      ],
+      "observations": "Prácticas de modelado matemático y simulación numérica.",
+      "department": "MATEMATICA"
+    },
+    {
+      "id": "esp-mat-2",
+      "name": "Auditorio Isaac Newton",
+      "capacity": 55,
+      "location": "Edificio de Matemática, Piso 1",
+      "type": "auditorio",
+      "resources": [
+        "Sistema de Audio",
+        "Proyector",
+        "Pizarra Acrílica de Triple Hoja"
+      ],
+      "observations": "Ponencias y simposios del departamento de Matemática.",
+      "department": "MATEMATICA"
+    },
+    {
+      "id": "esp-mat-3",
+      "name": "Sala de Postgrado Matemática",
+      "capacity": 20,
+      "location": "Edificio de Postgrado, Piso 2",
+      "type": "salon",
+      "resources": [
+        "Mesa de Trabajo",
+        "Televisor Smart",
+        "Pizarra de Vidrio"
+      ],
+      "observations": "Reuniones de investigación matemática y defensas de maestría.",
+      "department": "MATEMATICA"
+    },
+    {
+      "id": "esp-bib-1",
+      "name": "Cubículo Azul",
+      "capacity": 6,
+      "location": "Biblioteca Central FaCyT, Piso 1",
+      "type": "salon",
+      "resources": [
+        "Mesa de Estudio Modular",
+        "Pizarra de Cristal",
+        "Tomas Eléctricas"
+      ],
+      "observations": "Cubículo reservado para trabajo en equipo de estudiantes.",
+      "department": "BIBLIOTECA"
+    },
+    {
+      "id": "esp-bib-2",
+      "name": "Cubículo Blanco",
+      "capacity": 6,
+      "location": "Biblioteca Central FaCyT, Piso 1",
+      "type": "salon",
+      "resources": [
+        "Mesa de Estudio",
+        "Pantalla de Apoyo HDMI",
+        "Conexión Wi-Fi Dedicada"
+      ],
+      "observations": "Cubículo de estudio silencioso para pequeños grupos.",
+      "department": "BIBLIOTECA"
+    }
+  ],
+  "eventos": [
+    {
+      "id": "evt-inst-1",
+      "title": "Congreso Magna FaCyT 2026: Innovación y Ciencia Abierta",
+      "description": "Evento institucional anual de la Facultad Experimental de Ciencias y Tecnología. Exposición de ponencias magistrales, desarrollo científico y proyectos interdisciplinarios.",
+      "date": "2026-07-28",
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "spaceId": "esp-auditorio-ninoska",
+      "responsible": "Decanato FaCyT",
+      "activityType": "jornada",
+      "status": "aprobado",
+      "participantsCount": 100,
+      "createdAt": "2026-07-01T08:00:00.000Z",
+      "notes": "Evento global institucional con aforo en vivo para todos los estudiantes de FaCyT.",
+      "department": "GENERAL",
+      "isInstitutional": true,
+      "publicRegistrations": [
+        {
+          "userId": "usr-estudiante-1",
+          "name": "Andrés",
+          "lastName": "Crespo",
+          "cedula": "V-28111222",
+          "department": "COMPUTACION",
+          "registeredAt": "2026-07-05T10:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "evt-inst-2",
+      "title": "Simposio de Inteligencia Artificial y Computación Cuántica",
+      "description": "Conferencias magistrales impartidas por la Coordinación de Computación sobre los avances más recientes en algoritmos cuánticos y modelos generativos.",
+      "date": "2026-07-30",
+      "startTime": "10:00",
+      "endTime": "12:30",
+      "spaceId": "esp-comp-7",
+      "responsible": "Coordinación de Computación",
+      "activityType": "conversatorio",
+      "status": "aprobado",
+      "participantsCount": 60,
+      "createdAt": "2026-07-02T11:00:00.000Z",
+      "notes": "Entrada libre para la comunidad universitaria de la UC.",
+      "department": "COMPUTACION",
+      "isInstitutional": true,
+      "publicRegistrations": [],
+      "attendees": [
+        {
+          "cedula": "12345",
+          "name": "Jose",
+          "lastName": "Alvarado",
+          "department": "COMPUTACION",
+          "status": "aprobado",
+          "addedAt": "2026-07-21T20:53:39.062Z"
+        }
+      ]
+    },
+    {
+      "id": "evt-inst-3",
+      "title": "Taller de Bioseguridad y Manejo de Químicos Reactivos",
+      "description": "Taller institucional obligatorio organizado por la Coordinación de Química para estudiantes e investigadores que laboran en laboratorios de la facultad.",
+      "date": "2026-07-29",
+      "startTime": "08:30",
+      "endTime": "11:30",
+      "spaceId": "esp-qui-4",
+      "responsible": "Coordinación de Química",
+      "activityType": "taller",
+      "status": "aprobado",
+      "participantsCount": 85,
+      "createdAt": "2026-07-03T09:30:00.000Z",
+      "notes": "Incluye certificación digital de asistencia.",
+      "department": "QUIMICA",
+      "isInstitutional": true,
+      "publicRegistrations": []
+    },
+    {
+      "id": "evt-sol-1",
+      "title": "Taller Práctico de Desarrollo de APIs con Node.js y Express",
+      "description": "Taller enfocado en el diseño de arquitectura RESTful, middleware de seguridad y pruebas de endpoints para estudiantes de Computación.",
+      "date": "2026-07-25",
+      "startTime": "08:30",
+      "endTime": "11:30",
+      "spaceId": "esp-comp-2",
+      "responsible": "Andrés Crespo (Estudiante Solicitante)",
+      "activityType": "taller",
+      "status": "aprobado",
+      "participantsCount": 30,
+      "createdAt": "2026-07-15T14:20:00.000Z",
+      "notes": "Solicitado por estudiante. Aprobado por la coordinación.",
+      "department": "COMPUTACION",
+      "solicitanteId": "usr-estudiante-1",
+      "isInstitutional": false,
+      "attendees": [
+        {
+          "cedula": "V-29555666",
+          "name": "Carlos",
+          "lastName": "Díaz",
+          "department": "COMPUTACION",
+          "status": "aprobado",
+          "addedAt": "2026-07-16T09:00:00.000Z"
+        },
+        {
+          "cedula": "V-27888999",
+          "name": "Mariana",
+          "lastName": "López",
+          "department": "COMPUTACION",
+          "status": "pendiente",
+          "addedAt": "2026-07-16T09:10:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "evt-sol-2",
+      "title": "Mesa Redonda: Avances en Genómica y Biotecnología Vegetal",
+      "description": "Discusión sobre la aplicación de herramientas CRISPR en la edición genética de plantas alimenticias de la región central.",
+      "date": "2026-07-27",
+      "startTime": "14:00",
+      "endTime": "16:30",
+      "spaceId": "esp-bio-3",
+      "responsible": "Prof. María Castro",
+      "activityType": "conversatorio",
+      "status": "solicitado",
+      "participantsCount": 45,
+      "createdAt": "2026-07-18T10:00:00.000Z",
+      "notes": "En espera de revisión por el Departamento de Biología.",
+      "department": "BIOLOGIA",
+      "solicitanteId": "usr-profesor-1",
+      "isInstitutional": false
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "usr-admin-gen",
+      "name": "Decano FaCyT",
+      "lastName": "Decanato",
+      "cedula": "V-10111222",
+      "email": "decano@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "GENERAL"
+    },
+    {
+      "id": "usr-admin-comp",
+      "name": "Coordinación Computación",
+      "lastName": "FaCyT",
+      "cedula": "V-12345678",
+      "email": "comp@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "usr-admin-bio",
+      "name": "Coordinación Biología",
+      "lastName": "FaCyT",
+      "cedula": "V-13456789",
+      "email": "bio@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "BIOLOGIA"
+    },
+    {
+      "id": "usr-admin-qui",
+      "name": "Coordinación Química",
+      "lastName": "FaCyT",
+      "cedula": "V-14567890",
+      "email": "quimica@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "QUIMICA"
+    },
+    {
+      "id": "usr-admin-fis",
+      "name": "Coordinación Física",
+      "lastName": "FaCyT",
+      "cedula": "V-15678901",
+      "email": "fisica@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "FISICA"
+    },
+    {
+      "id": "usr-admin-mat",
+      "name": "Coordinación Matemática",
+      "lastName": "FaCyT",
+      "cedula": "V-16789012",
+      "email": "matematica@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "MATEMATICA"
+    },
+    {
+      "id": "usr-admin-bib",
+      "name": "Coordinación Biblioteca",
+      "lastName": "FaCyT",
+      "cedula": "V-17890123",
+      "email": "biblioteca@uc.edu.ve",
+      "password": "123",
+      "role": "director",
+      "department": "BIBLIOTECA"
+    },
+    {
+      "id": "usr-estudiante-1",
+      "name": "Andrés",
+      "lastName": "Crespo",
+      "cedula": "V-28111222",
+      "email": "acrespo4@uc.edu.ve",
+      "password": "123",
+      "role": "solicitante",
+      "department": "COMPUTACION"
+    },
+    {
+      "id": "usr-profesor-1",
+      "name": "María",
+      "lastName": "Castro",
+      "cedula": "V-18999888",
+      "email": "mcastro@uc.edu.ve",
+      "password": "123",
+      "role": "solicitante",
+      "department": "BIOLOGIA"
+    },
+    {
+      "id": "usr-1784667176673",
+      "name": "Jose",
+      "lastName": " Alvarado",
+      "cedula": "12345",
+      "email": "jose@uc.edu.ve",
+      "password": "123",
+      "role": "solicitante",
+      "department": "COMPUTACION",
+      "carnetBase64": ""
+    }
+  ]
+}
