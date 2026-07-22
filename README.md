@@ -1,8 +1,8 @@
 # Documento de Análisis - Sistema de Gestión de Eventos FaCyT (SI-Eventos)
 
 **Integrantes del Equipo:**
-- [Nombre y Apellido 1]
-- [Nombre y Apellido 2]
+- Brayan Ceballos
+- Andrés Crespo
 
 **URL del Despliegue:** [https://gestion-eventos-facyt.onrender.com](https://gestion-eventos-facyt.onrender.com)
 
