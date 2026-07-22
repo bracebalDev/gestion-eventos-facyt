@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  gestion-eventos-facyt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestion_eventos_facyt_container
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      # Montaje de volumen para mantener la persistencia de la base de datos JSON
+      - ./data:/app/data
+    restart: unless-stopped
