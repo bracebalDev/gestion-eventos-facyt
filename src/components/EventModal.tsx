@@ -261,7 +261,7 @@ export default function EventModal({
                 <option value="">Seleccione un espacio...</option>
                 {espacios.filter(s => {
                   if (currentUser.department === 'GENERAL') return true;
-                  return s.department === currentUser.department || s.department === 'GENERAL';
+                  return s.department === currentUser.department || s.department === 'GENERAL' || s.department === 'BIBLIOTECA';
                 }).map(s => (
                   <option key={s.id} value={s.id}>
                     {s.name} (Cap: {s.capacity})

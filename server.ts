@@ -297,7 +297,6 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-gen",
     name: "Decano FaCyT",
     lastName: "Decanato",
-    cedula: "V-10111222",
     email: "decano@uc.edu.ve",
     password: "123",
     role: "director",
@@ -308,7 +307,6 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-comp",
     name: "Coordinación Computación",
     lastName: "FaCyT",
-    cedula: "V-12345678",
     email: "comp@uc.edu.ve",
     password: "123",
     role: "director",
@@ -319,8 +317,7 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-bio",
     name: "Coordinación Biología",
     lastName: "FaCyT",
-    cedula: "V-13456789",
-    email: "bio@uc.edu.ve",
+    email: "biologia@uc.edu.ve",
     password: "123",
     role: "director",
     department: "BIOLOGIA",
@@ -330,7 +327,6 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-qui",
     name: "Coordinación Química",
     lastName: "FaCyT",
-    cedula: "V-14567890",
     email: "quimica@uc.edu.ve",
     password: "123",
     role: "director",
@@ -341,7 +337,6 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-fis",
     name: "Coordinación Física",
     lastName: "FaCyT",
-    cedula: "V-15678901",
     email: "fisica@uc.edu.ve",
     password: "123",
     role: "director",
@@ -352,7 +347,6 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-mat",
     name: "Coordinación Matemática",
     lastName: "FaCyT",
-    cedula: "V-16789012",
     email: "matematica@uc.edu.ve",
     password: "123",
     role: "director",
@@ -363,8 +357,7 @@ const defaultUsers: Usuario[] = [
     id: "usr-admin-bib",
     name: "Coordinación Biblioteca",
     lastName: "FaCyT",
-    cedula: "V-17890123",
-    email: "biblioteca@uc.edu.ve",
+    email: "biblio@uc.edu.ve",
     password: "123",
     role: "director",
     department: "BIBLIOTECA",
@@ -372,25 +365,14 @@ const defaultUsers: Usuario[] = [
   },
   {
     id: "usr-estudiante-1",
-    name: "Andrés",
-    lastName: "Crespo",
-    cedula: "V-28111222",
-    email: "acrespo4@uc.edu.ve",
+    name: "Jose",
+    lastName: "Alvarado",
+    cedula: "12345",
+    email: "jose@uc.edu.ve",
     password: "123",
     role: "solicitante",
     department: "COMPUTACION",
     createdAt: "2026-07-10T16:20:00.000Z"
-  },
-  {
-    id: "usr-profesor-1",
-    name: "María",
-    lastName: "Castro",
-    cedula: "V-18999888",
-    email: "mcastro@uc.edu.ve",
-    password: "123",
-    role: "solicitante",
-    department: "BIOLOGIA",
-    createdAt: "2026-07-12T13:10:00.000Z"
   }
 ];
 
@@ -509,7 +491,7 @@ const defaultEvents: Evento[] = [
     createdAt: new Date("2026-07-18T10:00:00").toISOString(),
     notes: "En espera de revisión por el Departamento de Biología.",
     department: "BIOLOGIA",
-    solicitanteId: "usr-profesor-1",
+    solicitanteId: "usr-estudiante-1",
     isInstitutional: false
   }
 ];

@@ -211,19 +211,7 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
 
           {!isLogin && (
             <>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tipo de Usuario</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value as Rol)}
-                    className="w-full p-1.5 border border-[#ececec] rounded text-xs text-[#37352f] focus:outline-none focus:border-blue-500 bg-white"
-                  >
-                    <option value="solicitante">Estudiante / Profesor</option>
-                    <option value="director">Coordinación / Decanato</option>
-                  </select>
-                </div>
-
+              <div className="space-y-3">
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Departamento *</label>
                   <select
@@ -237,7 +225,6 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
                     <option value="QUIMICA">Química</option>
                     <option value="MATEMATICA">Matemática</option>
                     <option value="BIBLIOTECA">Biblioteca FaCyT</option>
-                    {role === 'director' && <option value="GENERAL">Decanato (General)</option>}
                   </select>
                 </div>
               </div>
