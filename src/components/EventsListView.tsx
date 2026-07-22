@@ -24,9 +24,8 @@ interface EventsListViewProps {
   currentUser: Usuario;
   onSelectEvent: (evento: Evento) => void;
   onEditEvent: (evento: Evento) => void;
-  onDeleteEvent: (id: string) => void;
-  onUpdateStatus: (id: string, newStatus: EstadoEvento) => void;
-  onTriggerAiEnrich: (evento: Evento) => void;
+  onDeleteEvent?: (id: string) => void;
+  onUpdateStatus?: (id: string, newStatus: EstadoEvento) => void;
   onCreateEvent: () => void;
 }
 
@@ -39,7 +38,6 @@ export default function EventsListView({
   onEditEvent,
   onDeleteEvent,
   onUpdateStatus,
-  onTriggerAiEnrich,
   onCreateEvent,
   currentUser
 }: EventsListViewProps) {
@@ -345,7 +343,7 @@ export default function EventsListView({
                           <select
                             id={`status-select-${evt.id}`}
                             value={evt.status}
-                            onChange={(e) => onUpdateStatus(evt.id, e.target.value as EstadoEvento)}
+                            onChange={(e) => onUpdateStatus && onUpdateStatus(evt.id, e.target.value as EstadoEvento)}
                             disabled={!canChangeStatus(evt)}
                             className={`px-2 py-1 rounded-md text-[11px] font-medium border focus:outline-none transition-colors ${getStatusStyle(evt.status)} ${!canChangeStatus(evt) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                           >
@@ -364,14 +362,6 @@ export default function EventsListView({
                           <div className="flex items-center justify-end space-x-1 opacity-80 group-hover:opacity-100 transition-opacity">
                             {canEditOrDelete(evt) && (
                               <>
-                                <button
-                                  id={`btn-enrich-row-${evt.id}`}
-                                  onClick={() => onTriggerAiEnrich(evt)}
-                                  className="p-1.5 rounded hover:bg-purple-50 text-purple-600 transition-colors"
-                                  title="Enriquecer con Gemini AI"
-                                >
-                                  <Sparkles className="w-3.5 h-3.5" />
-                                </button>
                                 <button
                                   id={`btn-edit-row-${evt.id}`}
                                   onClick={() => onEditEvent(evt)}

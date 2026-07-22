@@ -20,7 +20,6 @@ interface SidebarProps {
   setCurrentTab: (tab: string) => void;
   onResetDb: () => void;
   isResetting: boolean;
-  geminiActive: boolean;
   currentUser: Usuario;
   onLogout: () => void;
   onOpenProfile: () => void;

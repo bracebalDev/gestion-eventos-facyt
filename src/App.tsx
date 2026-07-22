@@ -25,7 +25,6 @@ import EventsListView from './components/EventsListView';
 import CalendarView from './components/CalendarView';
 import SpacesView from './components/SpacesView';
 import RecentEventsView from './components/RecentEventsView';
-import AiAssistantPanel from './components/AiAssistantPanel';
 import AnalysisView from './components/AnalysisView';
 import UserManagementView from './components/UserManagementView';
 import EventModal from './components/EventModal';
@@ -40,7 +39,6 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [espacios, setEspacios] = useState<Espacio[]>([]);
-  const [geminiActive, setGeminiActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isResetting, setIsResetting] = useState<boolean>(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
@@ -118,7 +116,6 @@ export default function App() {
 
   // Estados para el Evento Seleccionado (Notion Page Flyout)
   const [inspectedEvent, setInspectedEvent] = useState<Evento | null>(null);
-  const [isAiPageWorking, setIsAiPageWorking] = useState<boolean>(false);
 
   // Estados para Modales
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -140,7 +137,6 @@ export default function App() {
       const data = await res.json();
       setEventos(data.eventos || []);
       setEspacios(data.espacios || []);
-      setGeminiActive(true);
     } catch (err) {
       console.error("No se pudo cargar la base de datos:", err);
     } finally {
@@ -252,65 +248,6 @@ export default function App() {
     } catch (err: any) {
       alert("Error registrando espacio: " + err.message);
     }
-  };
-
-  // 7. Enriquecer con Gemini AI
-  const handleTriggerAiEnrich = async (evento: Evento) => {
-    try {
-      setIsAiPageWorking(true);
-      setInspectedEvent(evento);
-      
-      const prompt = `Genera notas estructuradas, recomendaciones didácticas de apoyo y un itinerario detallado de actividades para el evento "${evento.title}" de FaCyT.`;
-      
-      const res = await fetch('/api/gemini/assist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt,
-          eventContext: evento,
-          actionType: 'enrich'
-        })
-      });
-
-      if (!res.ok) throw new Error('Error llamando a Gemini');
-      const data = await res.json();
-
-      const updateRes = await fetch(`/api/events/${evento.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aiSuggestions: data.text })
-      });
-
-      if (!updateRes.ok) throw new Error('Error guardando sugerencias de IA');
-      const updatedEvent = await updateRes.json();
-
-      await fetchData();
-      setInspectedEvent(updatedEvent);
-
-    } catch (err: any) {
-      alert("No se pudo enriquecer el evento: " + err.message);
-    } finally {
-      setIsAiPageWorking(false);
-    }
-  };
-
-  // 8. Consulta Directa al Asistente IA
-  const handleTriggerDirectAssist = async (prompt: string, actionType: string, eventContext?: any) => {
-    const res = await fetch('/api/gemini/assist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt,
-        eventContext,
-        actionType
-      })
-    });
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.error || 'Error procesando consulta AI');
-    }
-    const data = await res.json();
-    return data.text;
   };
 
   // Inscripción pública a eventos recientes
@@ -450,7 +387,6 @@ export default function App() {
         }}
         onResetDb={handleResetDb}
         isResetting={isResetting}
-        geminiActive={geminiActive}
         currentUser={currentUser}
         onLogout={() => setCurrentUser(null)}
         onOpenProfile={() => setIsProfileModalOpen(true)}
@@ -479,7 +415,6 @@ export default function App() {
               {currentTab === 'calendar' && '📅 Calendario Mensual'}
               {currentTab === 'events' && '📅 Gestión de Eventos'}
               {currentTab === 'spaces' && '🏛️ Aulas y Espacios'}
-              {currentTab === 'ai-assistant' && '✨ Asistente IA FaCyT'}
               {currentTab === 'analysis' && '📊 Resumen de Gestión'}
               {currentTab === 'user-management' && '👥 Registro de Usuarios'}
             </span>
@@ -504,13 +439,6 @@ export default function App() {
               >
                 <Radio className="w-3 h-3 text-emerald-600" />
                 <span className="hidden sm:inline">Eventos Recientes</span>
-              </button>
-              <button 
-                onClick={() => setCurrentTab('ai-assistant')} 
-                className="px-2 py-0.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded font-semibold transition-colors flex items-center space-x-1 text-[11px]"
-              >
-                <Sparkles className="w-3 h-3 text-purple-500" />
-                <span className="hidden sm:inline">Asistente IA</span>
               </button>
             </div>
           </div>
@@ -604,7 +532,6 @@ export default function App() {
                   }}
                   onDeleteEvent={handleDeleteEvent}
                   onUpdateStatus={handleUpdateStatus}
-                  onTriggerAiEnrich={handleTriggerAiEnrich}
                   onCreateEvent={() => handleOpenModalForNew()}
                 />
               )}
@@ -615,14 +542,6 @@ export default function App() {
                   eventos={eventos}
                   currentUser={currentUser}
                   onAddSpace={handleAddSpace}
-                />
-              )}
-
-              {currentTab === 'ai-assistant' && (
-                <AiAssistantPanel 
-                  eventos={eventos} 
-                  espacios={espacios}
-                  onTriggerDirectAssist={handleTriggerDirectAssist}
                 />
               )}
 
@@ -899,45 +818,6 @@ export default function App() {
                           className="w-full p-3 border border-[#ececec] bg-white rounded-lg text-xs text-[#37352f] focus:outline-none focus:ring-1 focus:ring-blue-400"
                         />
                       </div>
-
-                      {/* AI Suggestions Box */}
-                      <div className="p-5 border border-purple-100 rounded-xl bg-purple-50/40 space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[11px] font-bold text-purple-700 uppercase tracking-wider flex items-center space-x-1.5">
-                            <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-                            <span>Soporte Académico de IA (Gemini)</span>
-                          </span>
-                          
-                          <button
-                            id="btn-enrich-flyout"
-                            disabled={isAiPageWorking}
-                            onClick={() => handleTriggerAiEnrich(inspectedEvent)}
-                            className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-[10px] font-bold flex items-center space-x-1 disabled:opacity-50 transition-colors shadow-xs"
-                          >
-                            {isAiPageWorking ? (
-                              <>
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                                <span>Generando...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>Enriquecer con IA</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-
-                        {inspectedEvent.aiSuggestions ? (
-                          <div className="text-xs text-gray-700 leading-relaxed whitespace-pre-line bg-white border border-purple-100 p-4 rounded-lg shadow-2xs">
-                            {inspectedEvent.aiSuggestions}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-purple-950 italic">
-                            ¿Quieres que la IA te sugiera un cronograma por hora, actividades didácticas y normas específicas para este tipo de evento en FaCyT? Haz clic en "Enriquecer con IA".
-                          </p>
-                        )}
-                      </div>
                     </div>
 
                     {/* Flyout Footer */}
@@ -953,12 +833,7 @@ export default function App() {
         </div>
 
         {/* Quick Action Overlay/Bar */}
-        <footer className="h-10 border-t border-[#ececec] bg-[#fbfbfa] flex items-center justify-center space-x-4 sm:space-x-6 text-[10px] text-[#9b9a97] uppercase tracking-wider font-mono px-4">
-          <div className="flex items-center space-x-1 cursor-pointer hover:text-[#37352f]" onClick={() => setCurrentTab('ai-assistant')}>
-            <span className="hidden sm:inline">Asistente de IA</span>
-            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse ml-1"></div>
-          </div>
-          <span className="text-gray-300">•</span>
+        <footer className="h-10 border-t border-[#ececec] bg-[#fbfbfa] flex items-center justify-center space-x-6 text-[10px] text-[#9b9a97] uppercase tracking-wider font-mono">
           <div className="flex items-center space-x-1">
             <span>Online Sync</span>
             <span className="text-green-600 font-bold hidden sm:inline">● Activo</span>
