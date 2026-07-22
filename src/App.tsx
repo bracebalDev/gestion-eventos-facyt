@@ -45,9 +45,18 @@ export default function App() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
 
   const [currentUser, setCurrentUser] = useState<Usuario | null>(() => {
-    const saved = localStorage.getItem('currentUser');
+    const saved = sessionStorage.getItem('currentUser');
     return saved ? JSON.parse(saved) : null;
   });
+
+  // Resetea el tab al dashboard si el usuario acaba de loguearse
+  const [prevUser, setPrevUser] = useState<Usuario | null>(currentUser);
+  useEffect(() => {
+    if (currentUser && !prevUser) {
+      setCurrentTab('dashboard');
+    }
+    setPrevUser(currentUser);
+  }, [currentUser, prevUser]);
 
   // Estado formulario de asistente por cédula en flyout
   const [attCedula, setAttCedula] = useState('');
@@ -56,39 +65,39 @@ export default function App() {
   const [attDept, setAttDept] = useState<Departamento>('COMPUTACION');
   const [attError, setAttError] = useState('');
 
-  // Guardar en localStorage cuando cambie el usuario
+  // Guardar en sessionStorage cuando cambie el usuario
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('lastActiveTime');
+      sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('lastActiveTime');
     }
   }, [currentUser]);
 
-  // REQUERIMIENTO 4: Control de Expiración de Sesión de 5 Minutos
-  const SESSION_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutos
+  // REQUERIMIENTO 4: Control de Expiración de Sesión de 10 Minutos
+  const SESSION_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutos
 
   useEffect(() => {
     if (!currentUser) return;
 
     // Verificar inactividad o cierre previo
-    const savedTime = localStorage.getItem('lastActiveTime');
+    const savedTime = sessionStorage.getItem('lastActiveTime');
     if (savedTime) {
       const elapsed = Date.now() - Number(savedTime);
       if (elapsed > SESSION_TIMEOUT_MS) {
-        console.warn("Sesión expirada por inactividad de más de 5 minutos.");
+        console.warn("Sesión expirada por inactividad de más de 10 minutos.");
         setCurrentUser(null);
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('lastActiveTime');
+        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('lastActiveTime');
         return;
       }
     }
 
-    localStorage.setItem('lastActiveTime', Date.now().toString());
+    sessionStorage.setItem('lastActiveTime', Date.now().toString());
 
     const updateActivity = () => {
-      localStorage.setItem('lastActiveTime', Date.now().toString());
+      sessionStorage.setItem('lastActiveTime', Date.now().toString());
     };
 
     window.addEventListener('click', updateActivity);
@@ -97,12 +106,12 @@ export default function App() {
 
     // Comprobación periódica cada 10s
     const interval = setInterval(() => {
-      const lastActive = localStorage.getItem('lastActiveTime');
+      const lastActive = sessionStorage.getItem('lastActiveTime');
       if (lastActive && Date.now() - Number(lastActive) > SESSION_TIMEOUT_MS) {
         setCurrentUser(null);
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('lastActiveTime');
-        alert("Tu sesión ha expirado tras 5 minutos de inactividad o cierre. Por favor inicia sesión nuevamente.");
+        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('lastActiveTime');
+        alert("Tu sesión ha expirado tras 10 minutos de inactividad o al cerrar la ventana. Por favor inicia sesión nuevamente.");
       }
     }, 10000);
 

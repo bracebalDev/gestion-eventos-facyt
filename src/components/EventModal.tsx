@@ -70,8 +70,8 @@ export default function EventModal({
     } else {
       // Valores por defecto para nuevos eventos
       const defaultInitialStatus: EstadoEvento = currentUser.role === 'solicitante'
-        ? 'solicitado'
-        : (currentUser.role === 'director' && currentUser.department !== 'GENERAL' ? 'aprobado' : 'solicitado');
+        ? 'en revisión'
+        : 'aprobado';
 
       setTitle('');
       setDescription('');
@@ -122,9 +122,9 @@ export default function EventModal({
     }
 
     // Determinar estatus final según rol
-    const finalStatus: EstadoEvento = currentUser.role === 'solicitante'
-      ? 'solicitado'
-      : (currentUser.role === 'director' && currentUser.department !== 'GENERAL' ? 'aprobado' : status);
+    const finalStatus: EstadoEvento = eventToEdit ? status : (currentUser.role === 'solicitante'
+      ? 'en revisión'
+      : 'aprobado');
 
     const payload: Partial<Evento> = {
       ...(eventToEdit && { id: eventToEdit.id }),
@@ -160,9 +160,7 @@ export default function EventModal({
         {/* Header */}
         <div id="modal-header" className="p-4 border-b border-[#ececec] flex items-center justify-between bg-[#FBFBFA]">
           <div className="flex items-center space-x-2">
-            <div className="p-1 rounded bg-slate-200 text-[#37352F] border border-slate-300">
-              <Sparkles className="w-3.5 h-3.5" />
-            </div>
+
             <h2 className="font-bold text-sm text-[#37352F]">
               {eventToEdit ? '✏️ Editar Evento FaCyT' : '📅 Solicitar Evento FaCyT'}
             </h2>
@@ -261,7 +259,10 @@ export default function EventModal({
                 className="w-full p-1.5 border border-gray-200 rounded text-xs text-gray-900 bg-white focus:outline-none"
               >
                 <option value="">Seleccione un espacio...</option>
-                {espacios.map(s => (
+                {espacios.filter(s => {
+                  if (currentUser.department === 'GENERAL') return true;
+                  return s.department === currentUser.department || s.department === 'GENERAL';
+                }).map(s => (
                   <option key={s.id} value={s.id}>
                     {s.name} (Cap: {s.capacity})
                   </option>

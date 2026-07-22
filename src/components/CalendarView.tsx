@@ -175,20 +175,35 @@ export default function CalendarView({
 
               {/* Eventos del día */}
               <div className="space-y-1 overflow-y-auto max-h-20 flex-1">
-                {dayEvents.map(evt => (
-                  <div
-                    key={evt.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectEvent(evt);
-                    }}
-                    className={`p-1 rounded text-[10px] border truncate transition-all cursor-pointer shadow-2xs hover:scale-[1.02] ${getDepartmentColor(evt.department || 'GENERAL')}`}
-                    title={`${evt.title} (${evt.startTime} - ${evt.endTime})`}
-                  >
-                    <div className="font-bold truncate">{evt.title}</div>
-                    <div className="text-[9px] opacity-80 font-mono truncate">{evt.startTime}</div>
-                  </div>
-                ))}
+                {dayEvents.map(evt => {
+                  const now = new Date();
+                  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                  const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                  
+                  let displayStatus = "";
+                  if (evt.status === 'aprobado' || evt.status === 'programado' || evt.status === 'realizado') {
+                    if (evt.date < todayStr || (evt.date === todayStr && evt.endTime < currentTimeStr)) {
+                      displayStatus = ' (Finalizado)';
+                    } else if (evt.date === todayStr && evt.startTime <= currentTimeStr && evt.endTime >= currentTimeStr) {
+                      displayStatus = ' (En curso)';
+                    }
+                  }
+
+                  return (
+                    <div
+                      key={evt.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectEvent(evt);
+                      }}
+                      className={`p-1 rounded text-[10px] border truncate transition-all cursor-pointer shadow-2xs hover:scale-[1.02] ${getDepartmentColor(evt.department || 'GENERAL')}`}
+                      title={`${evt.title} (${evt.startTime} - ${evt.endTime})${displayStatus}`}
+                    >
+                      <div className="font-bold truncate">{evt.title}{displayStatus}</div>
+                      <div className="text-[9px] opacity-80 font-mono truncate">{evt.startTime}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
