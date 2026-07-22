@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   gestion-eventos-facyt:
@@ -11,8 +11,12 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    # Carga las variables de entorno desde el archivo .env (incluyendo GEMINI_API_KEY)
+    env_file:
+      - .env
     volumes:
-      # Montaje de volumen para mantener la persistencia de la base de datos JSON
+      # Este montaje de volumen garantiza que el archivo de la base de datos local (db.json)
+      # esté sincronizado entre tu máquina física (host) y el contenedor.
+      # Cualquier modificación de los datos se persistirá aquí.
       - ./data:/app/data
     restart: unless-stopped
