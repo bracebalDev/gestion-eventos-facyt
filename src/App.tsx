@@ -187,7 +187,13 @@ export default function App() {
   const handleResetDb = async () => {
     try {
       setIsResetting(true);
-      const res = await fetch('/api/db/reset', { method: 'POST' });
+      const res = await fetch('/api/db/reset', { 
+        method: 'POST',
+        headers: {
+          'x-user-id': currentUser?.id || '',
+          'x-user-role': currentUser?.role || ''
+        }
+      });
       if (!res.ok) throw new Error('Error al re-sembrar la base de datos');
       const result = await res.json();
       setEventos(result.data.eventos);

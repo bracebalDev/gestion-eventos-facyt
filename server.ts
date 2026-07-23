@@ -631,7 +631,20 @@ app.get("/api/db", (req, res) => {
 });
 
 // POST: Resetear base de datos a valores por defecto (para evaluación)
+// SEGURIDAD: Solo el admin puede resetear la base de datos
 app.post("/api/db/reset", (req, res) => {
+  const adminId = req.headers['x-user-id'] as string;
+  const adminRole = req.headers['x-user-role'] as string;
+  if (adminRole !== 'admin' || !adminId) {
+    const db = loadDatabase();
+    const caller = db.usuarios.find(u => u.id === adminId && u.role === 'admin');
+    if (!caller) {
+      // Permitir reset sin auth solo si no hay usuarios admin (compatibilidad)
+      if (db.usuarios.some(u => u.role === 'admin' as any)) {
+        return res.status(403).json({ error: 'Acceso denegado. Solo el administrador IT puede resetear la base de datos.' });
+      }
+    }
+  }
   const resetData: DatabaseSchema = {
     espacios: defaultSpaces,
     eventos: defaultEvents,
@@ -653,7 +666,7 @@ const authLimiter = rateLimit({
 
 app.post("/api/auth/register", authLimiter, (req, res) => {
   const db = loadDatabase();
-  const { name, lastName, cedula, email, password, role, department, carnetBase64 } = req.body;
+  const { name, lastName, cedula, email, password, department, carnetBase64 } = req.body;
 
   if (!email || !email.endsWith("@uc.edu.ve")) {
     return res.status(400).json({ error: "El correo debe pertenecer a la institución (@uc.edu.ve)." });
@@ -663,20 +676,27 @@ app.post("/api/auth/register", authLimiter, (req, res) => {
     return res.status(400).json({ error: "Debe seleccionar su Departamento de pertenencia." });
   }
 
+  // SEGURIDAD: Validar que el departamento sea válido y no sea GENERAL (exclusivo Decanato)
+  const allowedRegDepts = ['COMPUTACION', 'FISICA', 'BIOLOGIA', 'QUIMICA', 'MATEMATICA', 'BIBLIOTECA'];
+  if (!allowedRegDepts.includes(department)) {
+    return res.status(400).json({ error: "Departamento inválido para registro público." });
+  }
+
   const exists = db.usuarios.find(u => u.email === email);
   if (exists) {
     return res.status(400).json({ error: "El correo ya está registrado." });
   }
 
+  // SEGURIDAD: Siempre forzar rol 'solicitante' — ignorar cualquier valor enviado por el cliente
   const newUser: Usuario = {
     id: `usr-${Date.now()}`,
-    name,
-    lastName: lastName || '',
-    cedula: cedula || '',
-    email,
+    name: sanitizeText(name),
+    lastName: sanitizeText(lastName) || '',
+    cedula: sanitizeText(cedula) || '',
+    email: sanitizeText(email),
     password,
-    role: role || 'solicitante',
-    department: department || 'COMPUTACION',
+    role: 'solicitante',
+    department: department,
     carnetBase64,
     createdAt: new Date().toISOString()
   };
@@ -784,20 +804,49 @@ app.get("/api/users", (req, res) => {
   res.json(safeUsers);
 });
 
-// --- ADMIN: CRUD de Usuarios (Solo rol admin) ---
-app.get("/api/admin/users", (req, res) => {
+// --- ADMIN: Middleware de autenticación ---
+// SEGURIDAD: Verifica que la petición provenga de un usuario con rol admin real en la BD
+function requireAdmin(req: any, res: any, next: any) {
+  const userId = req.headers['x-user-id'] as string;
+  const userRole = req.headers['x-user-role'] as string;
+
+  if (!userId || userRole !== 'admin') {
+    return res.status(403).json({ error: 'Acceso denegado. Se requieren permisos de administrador.' });
+  }
+
+  // Verificar contra la base de datos que el usuario realmente existe y es admin
+  const db = loadDatabase();
+  const adminUser = db.usuarios.find(u => u.id === userId && (u.role as string) === 'admin');
+  if (!adminUser) {
+    return res.status(403).json({ error: 'Acceso denegado. Credenciales de administrador inválidas.' });
+  }
+
+  next();
+}
+
+// --- ADMIN: CRUD de Usuarios (Protegido con requireAdmin) ---
+app.get("/api/admin/users", requireAdmin, (req, res) => {
   const db = loadDatabase();
   const safeUsers = db.usuarios.map(({ password, ...rest }: any) => rest);
   res.json(safeUsers);
 });
 
-app.post("/api/admin/users", (req, res) => {
+app.post("/api/admin/users", requireAdmin, (req, res) => {
   const db = loadDatabase();
   const { name, lastName, cedula, email, password, role, department } = req.body;
 
   if (!email || !email.endsWith("@uc.edu.ve")) {
     return res.status(400).json({ error: "El correo debe pertenecer a la institución (@uc.edu.ve)." });
   }
+
+  // SEGURIDAD: Validar rol y departamento contra whitelist
+  if (role && !VALID_ROLES.includes(role)) {
+    return res.status(400).json({ error: `Rol inválido. Valores permitidos: ${VALID_ROLES.join(', ')}` });
+  }
+  if (department && !VALID_DEPARTMENTS.includes(department)) {
+    return res.status(400).json({ error: `Departamento inválido. Valores permitidos: ${VALID_DEPARTMENTS.join(', ')}` });
+  }
+
   const exists = db.usuarios.find((u: any) => u.email === email);
   if (exists) {
     return res.status(400).json({ error: "El correo ya está registrado." });
@@ -821,12 +870,21 @@ app.post("/api/admin/users", (req, res) => {
   res.status(201).json(safeUser);
 });
 
-app.put("/api/admin/users/:id", (req, res) => {
+app.put("/api/admin/users/:id", requireAdmin, (req, res) => {
   const db = loadDatabase();
   const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
 
   const { name, lastName, cedula, email, role, department } = req.body;
+
+  // SEGURIDAD: Validar rol y departamento contra whitelist
+  if (role && !VALID_ROLES.includes(role)) {
+    return res.status(400).json({ error: `Rol inválido. Valores permitidos: ${VALID_ROLES.join(', ')}` });
+  }
+  if (department && !VALID_DEPARTMENTS.includes(department)) {
+    return res.status(400).json({ error: `Departamento inválido. Valores permitidos: ${VALID_DEPARTMENTS.join(', ')}` });
+  }
+
   if (name) db.usuarios[idx].name = sanitizeText(name);
   if (lastName !== undefined) db.usuarios[idx].lastName = sanitizeText(lastName);
   if (cedula !== undefined) db.usuarios[idx].cedula = sanitizeText(cedula);
@@ -843,7 +901,7 @@ app.put("/api/admin/users/:id", (req, res) => {
   res.json(safeUser);
 });
 
-app.put("/api/admin/users/:id/reset-password", (req, res) => {
+app.put("/api/admin/users/:id/reset-password", requireAdmin, (req, res) => {
   const db = loadDatabase();
   const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
@@ -853,7 +911,7 @@ app.put("/api/admin/users/:id/reset-password", (req, res) => {
   res.json({ message: `Contraseña del usuario ${db.usuarios[idx].name} reseteada a valor por defecto.` });
 });
 
-app.delete("/api/admin/users/:id", (req, res) => {
+app.delete("/api/admin/users/:id", requireAdmin, (req, res) => {
   const db = loadDatabase();
   const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
@@ -896,10 +954,22 @@ app.get("/api/events", (req, res) => {
 });
 
 // Helper de Sanitización contra XSS / Inyección (Requerimiento 10)
+// Escapa los 5 caracteres críticos de HTML para prevenir inyección
 function sanitizeText(str?: string): string {
   if (!str) return '';
-  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").trim();
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .trim();
 }
+
+// Listas blancas de valores permitidos para roles y departamentos
+const VALID_ROLES = ['solicitante', 'director', 'admin'];
+const VALID_DEPARTMENTS = ['COMPUTACION', 'FISICA', 'BIOLOGIA', 'QUIMICA', 'MATEMATICA', 'BIBLIOTECA', 'GENERAL'];
+
 
 app.post("/api/events", (req, res) => {
   const db = loadDatabase();

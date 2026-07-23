@@ -61,7 +61,12 @@ export default function AdminPanel({ currentUser }: AdminPanelProps) {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      const res = await fetch('/api/admin/users');
+      const res = await fetch('/api/admin/users', {
+        headers: {
+          'x-user-id': currentUser.id,
+          'x-user-role': currentUser.role
+        }
+      });
       if (!res.ok) throw new Error('Error al obtener los usuarios');
       const data = await res.json();
       setUsers(data);
@@ -124,7 +129,11 @@ export default function AdminPanel({ currentUser }: AdminPanelProps) {
 
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': currentUser.id,
+          'x-user-role': currentUser.role
+        },
         body: JSON.stringify(payload)
       });
 
@@ -145,7 +154,13 @@ export default function AdminPanel({ currentUser }: AdminPanelProps) {
     if (!window.confirm('¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer.')) return;
     
     try {
-      const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/users/${id}`, { 
+        method: 'DELETE',
+        headers: {
+          'x-user-id': currentUser.id,
+          'x-user-role': currentUser.role
+        }
+      });
       if (!res.ok) throw new Error('Error al eliminar usuario');
       showSuccess('Usuario eliminado');
       fetchUsers();
@@ -158,7 +173,13 @@ export default function AdminPanel({ currentUser }: AdminPanelProps) {
     if (!window.confirm('¿Desea restablecer la contraseña de este usuario?')) return;
 
     try {
-      const res = await fetch(`/api/admin/users/${id}/reset-password`, { method: 'PUT' });
+      const res = await fetch(`/api/admin/users/${id}/reset-password`, { 
+        method: 'PUT',
+        headers: {
+          'x-user-id': currentUser.id,
+          'x-user-role': currentUser.role
+        }
+      });
       if (!res.ok) throw new Error('Error al restablecer contraseña');
       showSuccess('Contraseña restablecida exitosamente');
     } catch (err: any) {

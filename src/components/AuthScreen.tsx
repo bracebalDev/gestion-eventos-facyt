@@ -73,7 +73,6 @@ export default function AuthScreen({ onLoginSuccess }: AuthScreenProps) {
             cedula,
             email,
             password,
-            role,
             department,
             carnetBase64
           })
