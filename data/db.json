@@ -352,7 +352,7 @@
       "activityType": "jornada",
       "status": "aprobado",
       "participantsCount": 100,
-      "createdAt": "2026-07-01T08:00:00.000Z",
+      "createdAt": "2026-07-01T12:00:00.000Z",
       "notes": "Evento global institucional con aforo en vivo para todos los estudiantes de FaCyT.",
       "department": "GENERAL",
       "isInstitutional": true,
@@ -363,7 +363,7 @@
           "lastName": "Crespo",
           "cedula": "V-28111222",
           "department": "COMPUTACION",
-          "registeredAt": "2026-07-05T10:00:00.000Z"
+          "registeredAt": "2026-07-05T14:00:00.000Z"
         }
       ]
     },
@@ -379,21 +379,11 @@
       "activityType": "conversatorio",
       "status": "aprobado",
       "participantsCount": 60,
-      "createdAt": "2026-07-02T11:00:00.000Z",
+      "createdAt": "2026-07-02T15:00:00.000Z",
       "notes": "Entrada libre para la comunidad universitaria de la UC.",
       "department": "COMPUTACION",
       "isInstitutional": true,
-      "publicRegistrations": [],
-      "attendees": [
-        {
-          "cedula": "12345",
-          "name": "Jose",
-          "lastName": "Alvarado",
-          "department": "COMPUTACION",
-          "status": "aprobado",
-          "addedAt": "2026-07-21T20:53:39.062Z"
-        }
-      ]
+      "publicRegistrations": []
     },
     {
       "id": "evt-inst-3",
@@ -407,7 +397,7 @@
       "activityType": "taller",
       "status": "aprobado",
       "participantsCount": 85,
-      "createdAt": "2026-07-03T09:30:00.000Z",
+      "createdAt": "2026-07-03T13:30:00.000Z",
       "notes": "Incluye certificación digital de asistencia.",
       "department": "QUIMICA",
       "isInstitutional": true,
@@ -425,7 +415,7 @@
       "activityType": "taller",
       "status": "aprobado",
       "participantsCount": 30,
-      "createdAt": "2026-07-15T14:20:00.000Z",
+      "createdAt": "2026-07-15T18:20:00.000Z",
       "notes": "Solicitado por estudiante. Aprobado por la coordinación.",
       "department": "COMPUTACION",
       "solicitanteId": "usr-estudiante-1",
@@ -437,7 +427,7 @@
           "lastName": "Díaz",
           "department": "COMPUTACION",
           "status": "aprobado",
-          "addedAt": "2026-07-16T09:00:00.000Z"
+          "addedAt": "2026-07-16T13:00:00.000Z"
         },
         {
           "cedula": "V-27888999",
@@ -445,7 +435,7 @@
           "lastName": "López",
           "department": "COMPUTACION",
           "status": "pendiente",
-          "addedAt": "2026-07-16T09:10:00.000Z"
+          "addedAt": "2026-07-16T13:10:00.000Z"
         }
       ]
     },
@@ -461,10 +451,10 @@
       "activityType": "conversatorio",
       "status": "solicitado",
       "participantsCount": 45,
-      "createdAt": "2026-07-18T10:00:00.000Z",
+      "createdAt": "2026-07-18T14:00:00.000Z",
       "notes": "En espera de revisión por el Departamento de Biología.",
       "department": "BIOLOGIA",
-      "solicitanteId": "usr-profesor-1",
+      "solicitanteId": "usr-estudiante-1",
       "isInstitutional": false
     }
   ],
@@ -473,102 +463,92 @@
       "id": "usr-admin-gen",
       "name": "Decano FaCyT",
       "lastName": "Decanato",
-      "cedula": "V-10111222",
       "email": "decano@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "GENERAL"
+      "department": "GENERAL",
+      "createdAt": "2026-07-01T08:00:00.000Z"
     },
     {
       "id": "usr-admin-comp",
       "name": "Coordinación Computación",
       "lastName": "FaCyT",
-      "cedula": "V-12345678",
       "email": "comp@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "COMPUTACION"
+      "department": "COMPUTACION",
+      "createdAt": "2026-07-02T09:15:00.000Z"
     },
     {
       "id": "usr-admin-bio",
       "name": "Coordinación Biología",
       "lastName": "FaCyT",
-      "cedula": "V-13456789",
-      "email": "bio@uc.edu.ve",
+      "email": "biologia@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "BIOLOGIA"
+      "department": "BIOLOGIA",
+      "createdAt": "2026-07-03T11:20:00.000Z"
     },
     {
       "id": "usr-admin-qui",
       "name": "Coordinación Química",
       "lastName": "FaCyT",
-      "cedula": "V-14567890",
       "email": "quimica@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "QUIMICA"
+      "department": "QUIMICA",
+      "createdAt": "2026-07-04T14:00:00.000Z"
     },
     {
       "id": "usr-admin-fis",
       "name": "Coordinación Física",
       "lastName": "FaCyT",
-      "cedula": "V-15678901",
       "email": "fisica@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "FISICA"
+      "department": "FISICA",
+      "createdAt": "2026-07-05T10:30:00.000Z"
     },
     {
       "id": "usr-admin-mat",
       "name": "Coordinación Matemática",
       "lastName": "FaCyT",
-      "cedula": "V-16789012",
       "email": "matematica@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "MATEMATICA"
+      "department": "MATEMATICA",
+      "createdAt": "2026-07-06T15:45:00.000Z"
     },
     {
       "id": "usr-admin-bib",
       "name": "Coordinación Biblioteca",
       "lastName": "FaCyT",
-      "cedula": "V-17890123",
-      "email": "biblioteca@uc.edu.ve",
+      "email": "biblio@uc.edu.ve",
       "password": "123",
       "role": "director",
-      "department": "BIBLIOTECA"
+      "department": "BIBLIOTECA",
+      "createdAt": "2026-07-07T08:30:00.000Z"
     },
     {
       "id": "usr-estudiante-1",
-      "name": "Andrés",
-      "lastName": "Crespo",
-      "cedula": "V-28111222",
-      "email": "acrespo4@uc.edu.ve",
-      "password": "123",
-      "role": "solicitante",
-      "department": "COMPUTACION"
-    },
-    {
-      "id": "usr-profesor-1",
-      "name": "María",
-      "lastName": "Castro",
-      "cedula": "V-18999888",
-      "email": "mcastro@uc.edu.ve",
-      "password": "123",
-      "role": "solicitante",
-      "department": "BIOLOGIA"
-    },
-    {
-      "id": "usr-1784667176673",
       "name": "Jose",
-      "lastName": " Alvarado",
+      "lastName": "Alvarado",
       "cedula": "12345",
       "email": "jose@uc.edu.ve",
       "password": "123",
       "role": "solicitante",
       "department": "COMPUTACION",
-      "carnetBase64": ""
+      "createdAt": "2026-07-10T16:20:00.000Z"
+    },
+    {
+      "id": "usr-admin-it",
+      "name": "Soporte IT",
+      "lastName": "FaCyT",
+      "email": "admin@uc.edu.ve",
+      "password": "admin123",
+      "role": "admin",
+      "department": "GENERAL",
+      "createdAt": "2026-07-01T06:00:00.000Z"
     }
   ]
 }

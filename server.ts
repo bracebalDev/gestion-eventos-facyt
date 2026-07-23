@@ -373,6 +373,16 @@ const defaultUsers: Usuario[] = [
     role: "solicitante",
     department: "COMPUTACION",
     createdAt: "2026-07-10T16:20:00.000Z"
+  },
+  {
+    id: "usr-admin-it",
+    name: "Soporte IT",
+    lastName: "FaCyT",
+    email: "admin@uc.edu.ve",
+    password: "admin123",
+    role: "admin" as any,
+    department: "GENERAL" as any,
+    createdAt: "2026-07-01T06:00:00.000Z"
   }
 ];
 
@@ -616,7 +626,8 @@ app.get("/api/db", (req, res) => {
     conflictWarning: detectConflicts(evt, db.eventos)
   }));
 
-  res.json({ espacios: db.espacios, eventos: enrichedEvents, usuarios: db.usuarios });
+  const safeUsuarios = db.usuarios.map(({ password, ...rest }: any) => rest);
+  res.json({ espacios: db.espacios, eventos: enrichedEvents, usuarios: safeUsuarios });
 });
 
 // POST: Resetear base de datos a valores por defecto (para evaluación)
@@ -627,7 +638,8 @@ app.post("/api/db/reset", (req, res) => {
     usuarios: defaultUsers
   };
   saveDatabase(resetData);
-  res.json({ message: "Base de datos re-sembrada con éxito", data: resetData });
+  const safeData = { ...resetData, usuarios: resetData.usuarios.map(({ password, ...rest }: any) => rest) };
+  res.json({ message: "Base de datos re-sembrada con éxito", data: safeData });
 });
 
 // --- AUTH ---
@@ -772,6 +784,85 @@ app.get("/api/users", (req, res) => {
   res.json(safeUsers);
 });
 
+// --- ADMIN: CRUD de Usuarios (Solo rol admin) ---
+app.get("/api/admin/users", (req, res) => {
+  const db = loadDatabase();
+  const safeUsers = db.usuarios.map(({ password, ...rest }: any) => rest);
+  res.json(safeUsers);
+});
+
+app.post("/api/admin/users", (req, res) => {
+  const db = loadDatabase();
+  const { name, lastName, cedula, email, password, role, department } = req.body;
+
+  if (!email || !email.endsWith("@uc.edu.ve")) {
+    return res.status(400).json({ error: "El correo debe pertenecer a la institución (@uc.edu.ve)." });
+  }
+  const exists = db.usuarios.find((u: any) => u.email === email);
+  if (exists) {
+    return res.status(400).json({ error: "El correo ya está registrado." });
+  }
+
+  const newUser: any = {
+    id: `usr-${Date.now()}`,
+    name: sanitizeText(name),
+    lastName: sanitizeText(lastName) || '',
+    cedula: sanitizeText(cedula) || '',
+    email: sanitizeText(email),
+    password: password || '123',
+    role: role || 'solicitante',
+    department: department || 'COMPUTACION',
+    createdAt: new Date().toISOString()
+  };
+
+  db.usuarios.push(newUser);
+  saveDatabase(db);
+  const { password: _, ...safeUser } = newUser;
+  res.status(201).json(safeUser);
+});
+
+app.put("/api/admin/users/:id", (req, res) => {
+  const db = loadDatabase();
+  const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
+
+  const { name, lastName, cedula, email, role, department } = req.body;
+  if (name) db.usuarios[idx].name = sanitizeText(name);
+  if (lastName !== undefined) db.usuarios[idx].lastName = sanitizeText(lastName);
+  if (cedula !== undefined) db.usuarios[idx].cedula = sanitizeText(cedula);
+  if (email) {
+    const emailExists = db.usuarios.some((u: any) => u.id !== req.params.id && u.email === email);
+    if (emailExists) return res.status(400).json({ error: "El correo ya está registrado por otro usuario." });
+    db.usuarios[idx].email = sanitizeText(email);
+  }
+  if (role) db.usuarios[idx].role = role;
+  if (department) db.usuarios[idx].department = department;
+
+  saveDatabase(db);
+  const { password: _, ...safeUser } = db.usuarios[idx] as any;
+  res.json(safeUser);
+});
+
+app.put("/api/admin/users/:id/reset-password", (req, res) => {
+  const db = loadDatabase();
+  const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
+
+  db.usuarios[idx].password = "123";
+  saveDatabase(db);
+  res.json({ message: `Contraseña del usuario ${db.usuarios[idx].name} reseteada a valor por defecto.` });
+});
+
+app.delete("/api/admin/users/:id", (req, res) => {
+  const db = loadDatabase();
+  const idx = db.usuarios.findIndex((u: any) => u.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Usuario no encontrado." });
+
+  const removed = db.usuarios.splice(idx, 1);
+  saveDatabase(db);
+  res.json({ message: `Usuario ${removed[0].name} eliminado correctamente.` });
+});
+
 // --- ESPACIOS ---
 app.get("/api/spaces", (req, res) => {
   const db = loadDatabase();
@@ -816,6 +907,16 @@ app.post("/api/events", (req, res) => {
   const userDept = req.body.department || "GENERAL";
   const isStudent = req.body.role === 'solicitante';
   const isDecano = userDept === 'GENERAL';
+
+  // VALIDACIÓN: No permitir eventos en fechas pasadas
+  const eventDate = req.body.date;
+  if (eventDate) {
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Caracas' }));
+    const todayStr = now.toISOString().split('T')[0];
+    if (eventDate < todayStr) {
+      return res.status(400).json({ error: "No se pueden crear eventos en fechas anteriores a la fecha actual." });
+    }
+  }
 
   // REQUERIMIENTO 5: Asignación de alcance del evento (PUBLICO o DEPARTAMENTAL)
   let calculatedScope: 'PUBLICO' | 'DEPARTAMENTAL' = 'DEPARTAMENTAL';
@@ -1066,6 +1167,11 @@ La acción solicitada es de tipo: "${actionType}".`;
 
 // Vite or static file serving
 async function bootstrap() {
+  // Bloquear acceso directo a la carpeta de base de datos
+  app.use('/data', (req, res) => {
+    res.status(403).json({ error: 'Acceso denegado a archivos sensibles del sistema.' });
+  });
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },

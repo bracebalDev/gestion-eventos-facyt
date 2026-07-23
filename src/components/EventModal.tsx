@@ -100,6 +100,14 @@ export default function EventModal({
       return;
     }
 
+    // VALIDACIÓN: No permitir eventos en fechas pasadas
+    const todayVE = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Caracas' }));
+    const todayStr = todayVE.toISOString().split('T')[0];
+    if (!eventToEdit && date < todayStr) {
+      alert("No se pueden crear eventos en fechas anteriores a la fecha actual.");
+      return;
+    }
+
     if (startTime >= endTime) {
       alert("La hora de inicio debe ser anterior a la hora de fin.");
       return;
@@ -217,6 +225,7 @@ export default function EventModal({
                 id="input-date"
                 type="date"
                 required
+                min={eventToEdit ? undefined : new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Caracas' })).toISOString().split('T')[0]}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full p-1.5 border border-gray-200 rounded text-xs text-gray-900 focus:outline-none"

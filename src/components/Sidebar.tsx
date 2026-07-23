@@ -10,7 +10,9 @@ import {
   Users,
   BarChart3,
   X,
-  RefreshCw
+  RefreshCw,
+  Shield,
+  FileBarChart
 } from 'lucide-react';
 import { Usuario } from '../types';
 import logoFacyt from './Logo-Facyt.svg';
@@ -57,6 +59,16 @@ export default function Sidebar({
     });
   }
 
+  // Reportes para directores (Decano, Departamento, Biblioteca)
+  if (currentUser.role === 'director') {
+    menuItems.push({
+      id: 'reports',
+      name: 'Exportar Reportes',
+      icon: FileBarChart,
+      badge: 'PDF'
+    });
+  }
+
   // REQUERIMIENTO DECANATO: Pestaña de Registro de Usuarios exclusivo para Decano
   if (currentUser.role === 'director' && currentUser.department === 'GENERAL') {
     menuItems.push({
@@ -64,6 +76,16 @@ export default function Sidebar({
       name: 'Registro de Usuarios',
       icon: Users,
       badge: 'Decanato'
+    });
+  }
+
+  // Panel de Administración exclusivo para admin IT
+  if (currentUser.role === 'admin') {
+    menuItems.push({
+      id: 'admin-panel',
+      name: 'Panel de Administración',
+      icon: Shield,
+      badge: 'Admin'
     });
   }
 
@@ -134,11 +156,15 @@ export default function Sidebar({
                 </div>
                 {item.badge && (
                   <span className={`text-[9px] px-1 py-0.2 rounded font-mono ${
-                    item.id === 'user-management'
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
-                      : item.id === 'recent'
-                      ? 'bg-emerald-50 text-emerald-700 font-bold'
-                      : 'bg-[#efefef] text-gray-600'
+                    item.id === 'admin-panel'
+                    ? 'bg-rose-50 text-rose-700 font-bold'
+                    : item.id === 'user-management'
+                    ? 'bg-indigo-50 text-indigo-700 font-bold'
+                    : item.id === 'recent'
+                    ? 'bg-emerald-50 text-emerald-700 font-bold'
+                    : item.id === 'reports'
+                    ? 'bg-blue-50 text-blue-700 font-bold'
+                    : 'bg-[#efefef] text-gray-600'
                   }`}>
                     {item.badge}
                   </span>
@@ -169,7 +195,7 @@ export default function Sidebar({
                   {currentUser.name} {currentUser.lastName || ''}
                 </p>
                 <p className="text-[9px] text-gray-500 capitalize">
-                  {currentUser.role === 'director' ? `Dir. ${currentUser.department}` : `Est. ${currentUser.department}`}
+                  {currentUser.role === 'admin' ? 'Administrador IT' : currentUser.role === 'director' ? `Dir. ${currentUser.department}` : `Est. ${currentUser.department}`}
                 </p>
               </div>
               <span className="text-[9px] font-bold text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">✏️</span>

@@ -27,6 +27,8 @@ import SpacesView from './components/SpacesView';
 import RecentEventsView from './components/RecentEventsView';
 import AnalysisView from './components/AnalysisView';
 import UserManagementView from './components/UserManagementView';
+import AdminPanel from './components/AdminPanel';
+import ReportsView from './components/ReportsView';
 import EventModal from './components/EventModal';
 import ProfileModal from './components/ProfileModal';
 import AuthScreen from './components/AuthScreen';
@@ -43,6 +45,30 @@ export default function App() {
   const [isResetting, setIsResetting] = useState<boolean>(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+
+  // Reloj en tiempo real de Venezuela
+  const [venezuelaClock, setVenezuelaClock] = useState<string>('');
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      const formatted = now.toLocaleString('es-VE', {
+        timeZone: 'America/Caracas',
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      // Capitalizar primera letra
+      setVenezuelaClock(formatted.charAt(0).toUpperCase() + formatted.slice(1));
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [currentUser, setCurrentUser] = useState<Usuario | null>(() => {
     const saved = sessionStorage.getItem('currentUser');
@@ -414,10 +440,6 @@ export default function App() {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="text-[#9b9a97] hidden sm:inline">Workspaces</span>
-            <span className="text-[#9b9a97] hidden sm:inline">/</span>
-            <span className="text-[#9b9a97]">FaCyT Eventos</span>
-            <span className="text-[#9b9a97]">/</span>
             <span className="font-semibold text-[#37352f] truncate max-w-[150px] sm:max-w-none">
               {currentTab === 'dashboard' && '📊 Tablero de Control'}
               {currentTab === 'recent' && '🌟 Eventos Recientes (Aforo)'}
@@ -426,7 +448,15 @@ export default function App() {
               {currentTab === 'spaces' && '🏛️ Aulas y Espacios'}
               {currentTab === 'analysis' && '📊 Resumen de Gestión'}
               {currentTab === 'user-management' && '👥 Registro de Usuarios'}
+              {currentTab === 'admin-panel' && '🛡️ Panel de Administración'}
+              {currentTab === 'reports' && '📄 Exportar Reportes'}
             </span>
+          </div>
+
+          {/* Reloj Venezuela - Centro */}
+          <div className="hidden md:flex items-center text-[11px] text-[#5a5a57] font-medium">
+            <Clock className="w-3.5 h-3.5 mr-1.5 text-[#9b9a97]" />
+            <span>{venezuelaClock}</span>
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
@@ -565,6 +595,14 @@ export default function App() {
 
               {currentTab === 'user-management' && currentUser.role === 'director' && currentUser.department === 'GENERAL' && (
                 <UserManagementView />
+              )}
+
+              {currentTab === 'admin-panel' && currentUser.role === 'admin' && (
+                <AdminPanel currentUser={currentUser} />
+              )}
+
+              {currentTab === 'reports' && currentUser.role === 'director' && (
+                <ReportsView eventos={eventos} espacios={espacios} currentUser={currentUser} />
               )}
 
               {/* NOTION-STYLE EVENT PAGE INSPECT DRAWER */}

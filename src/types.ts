@@ -23,7 +23,7 @@ export interface Espacio {
   department?: Departamento; // Departamento al que pertenece (si es exclusivo)
 }
 
-export type Rol = 'solicitante' | 'director';
+export type Rol = 'solicitante' | 'director' | 'admin';
 
 export interface Usuario {
   id: string;
