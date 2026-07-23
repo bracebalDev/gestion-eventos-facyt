@@ -506,8 +506,26 @@ const defaultEvents: Evento[] = [
   }
 ];
 
+// --- IN-MEMORY CACHE & MUTEX ---
+let dbCache: DatabaseSchema | null = null;
+let isWriting = false;
+const writeQueue: (() => void)[] = [];
+
+// Índices para optimización O(1)
+const usuariosMap = new Map<string, Usuario>();
+const eventosMap = new Map<string, Evento>();
+
+function buildIndexes(db: DatabaseSchema) {
+  usuariosMap.clear();
+  eventosMap.clear();
+  db.usuarios.forEach(u => usuariosMap.set(u.id, u));
+  db.eventos.forEach(e => eventosMap.set(e.id, e));
+}
+
 // Helper to load DB
 function loadDatabase(): DatabaseSchema {
+  if (dbCache) return dbCache;
+
   if (!fs.existsSync(DB_PATH)) {
     ensureDirectoryExistence(DB_PATH);
     const initialData: DatabaseSchema = {
@@ -516,6 +534,8 @@ function loadDatabase(): DatabaseSchema {
       usuarios: defaultUsers
     };
     fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2), "utf8");
+    dbCache = initialData;
+    buildIndexes(dbCache);
     return initialData;
   }
   try {
@@ -524,20 +544,46 @@ function loadDatabase(): DatabaseSchema {
     if (!parsed.usuarios || parsed.usuarios.length === 0) parsed.usuarios = defaultUsers;
     if (!parsed.espacios || parsed.espacios.length === 0) parsed.espacios = defaultSpaces;
     if (!parsed.eventos) parsed.eventos = defaultEvents;
+    dbCache = parsed;
+    buildIndexes(dbCache);
     return parsed;
   } catch (error) {
     console.error("Error reading database file, returning default data:", error);
-    return { espacios: defaultSpaces, eventos: defaultEvents, usuarios: defaultUsers };
+    dbCache = { espacios: defaultSpaces, eventos: defaultEvents, usuarios: defaultUsers };
+    buildIndexes(dbCache);
+    return dbCache;
   }
 }
 
-// Helper to save DB
+// Helper to save DB (Mutex implementation)
 function saveDatabase(data: DatabaseSchema) {
-  try {
-    ensureDirectoryExistence(DB_PATH);
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf8");
-  } catch (error) {
-    console.error("Error writing database file:", error);
+  // Update cache immediately for consistency
+  dbCache = data;
+  buildIndexes(data);
+
+  const performWrite = () => {
+    try {
+      ensureDirectoryExistence(DB_PATH);
+      fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf8");
+    } catch (error) {
+      console.error("Error writing database file:", error);
+    } finally {
+      isWriting = false;
+      if (writeQueue.length > 0) {
+        const next = writeQueue.shift();
+        if (next) next();
+      }
+    }
+  };
+
+  if (isWriting) {
+    writeQueue.push(() => {
+      isWriting = true;
+      performWrite();
+    });
+  } else {
+    isWriting = true;
+    performWrite();
   }
 }
 
@@ -626,8 +672,8 @@ app.get("/api/db", (req, res) => {
     conflictWarning: detectConflicts(evt, db.eventos)
   }));
 
-  const safeUsuarios = db.usuarios.map(({ password, ...rest }: any) => rest);
-  res.json({ espacios: db.espacios, eventos: enrichedEvents, usuarios: safeUsuarios });
+  // SEGURIDAD: Ya no exponemos usuarios aquí, solo eventos y espacios
+  res.json({ espacios: db.espacios, eventos: enrichedEvents });
 });
 
 // POST: Resetear base de datos a valores por defecto (para evaluación)
@@ -789,18 +835,18 @@ app.put("/api/users/:id/profile", (req, res) => {
 });
 
 // --- USUARIOS ---
+// GET: Obtener usuarios (SEGURIDAD: Solo para directores y admins)
 app.get("/api/users", (req, res) => {
+  const callerId = req.headers['x-user-id'] as string;
+  const callerRole = req.headers['x-user-role'] as string;
+  const callerDept = req.headers['x-user-dept'] as string;
+  
+  if (callerRole !== 'admin' && (callerRole !== 'director' || callerDept !== 'GENERAL')) {
+    return res.status(403).json({ error: "Acceso denegado. Solo el Decano o el Admin pueden ver los usuarios." });
+  }
+
   const db = loadDatabase();
-  const safeUsers = db.usuarios.map(u => ({
-    id: u.id,
-    name: u.name,
-    lastName: u.lastName || '',
-    cedula: u.cedula || '',
-    email: u.email,
-    role: u.role,
-    department: u.department,
-    createdAt: u.createdAt || new Date().toISOString()
-  }));
+  const safeUsers = db.usuarios.map(({ password, ...rest }: any) => rest);
   res.json(safeUsers);
 });
 
@@ -1250,7 +1296,10 @@ async function bootstrap() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      maxAge: '1y',
+      etag: true,
+    }));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
